@@ -24,4 +24,21 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    public void signIn(View view){
+
+
+
+
+    }
+
+    public void signUp(View view){
+
+
+
+    }
+
+
+
+
+
 }
