@@ -4,6 +4,7 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -22,7 +23,20 @@ import android.widget.Toast;
 
 import com.asus.instagramclone.databinding.ActivityMainBinding;
 import com.asus.instagramclone.databinding.ActivityShareBinding;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 public class ShareActivity extends AppCompatActivity {
 
@@ -30,6 +44,14 @@ public class ShareActivity extends AppCompatActivity {
     ActivityResultLauncher<Intent> activityResultLauncher;
     ActivityResultLauncher<String> permissionLauncher;
     Uri imageData;
+
+    FirebaseStorage firebaseStorage;
+    FirebaseAuth mAuth;
+    FirebaseFirestore firebaseFirestore;
+    StorageReference storageReference;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,8 +62,11 @@ public class ShareActivity extends AppCompatActivity {
 
         registerLauncher();
 
-
-
+        // Firebase
+        firebaseStorage = FirebaseStorage.getInstance();
+        mAuth = FirebaseAuth.getInstance();
+        firebaseFirestore = FirebaseFirestore.getInstance();
+        storageReference = firebaseStorage.getReference();
     }
 
 
@@ -131,6 +156,70 @@ public class ShareActivity extends AppCompatActivity {
     }
 
     public void share(View view){
+
+        if(imageData != null){
+
+            // universal unique id
+            UUID uuid = UUID.randomUUID();
+            String imageReferenceName = "images/"+uuid+".jpg";
+
+
+            storageReference.child(imageReferenceName).putFile(imageData).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                    //Download URL
+
+                    StorageReference newReference = FirebaseStorage.getInstance().getReference(imageReferenceName);
+                    newReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+
+                            String downloadUrl = uri.toString();
+
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            String userEmail = firebaseUser.getEmail();
+
+                            String comment = binding.editTextComment.getText().toString();
+
+                            HashMap<String, Object> postData = new HashMap<>();         // keeps data as double keywords
+
+                            postData.put("userEmail",userEmail);
+                            postData.put("downloadUrl",downloadUrl);
+                            postData.put("comment",comment);
+                            postData.put("date", FieldValue.serverTimestamp());
+
+                            firebaseFirestore.collection("Posts").add(postData).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                @Override
+                                public void onSuccess(DocumentReference documentReference) {
+
+                                    Intent intent = new Intent(ShareActivity.this, FeedActivity.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                    startActivity(intent);
+
+                                }
+                            }).addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(ShareActivity.this,e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+                                }
+                            });
+                        }
+                    });
+
+
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(ShareActivity.this,e.getLocalizedMessage().toString(),Toast.LENGTH_LONG).show();
+                }
+            });
+
+
+        }
+
+
 
 
     }
