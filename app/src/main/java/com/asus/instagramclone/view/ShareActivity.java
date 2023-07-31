@@ -1,4 +1,4 @@
-package com.asus.instagramclone;
+package com.asus.instagramclone.view;
 
 import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
@@ -13,7 +13,6 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Toast;
 
-import com.asus.instagramclone.databinding.ActivityMainBinding;
 import com.asus.instagramclone.databinding.ActivityShareBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;

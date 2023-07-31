@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/receylerView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="3dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/receylerViewUserEmailText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:text="userEmail"
+        android:textColor="#000000"
+        android:textSize="20sp"></TextView>
+
+    <ImageView
+        android:id="@+id/receylerViewImageView"
+        android:layout_width="300dp"
+        android:layout_height="250dp"
+
+        android:layout_gravity="center"></ImageView>
+
+    <TextView
+        android:id="@+id/receylerViewCommentText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"
+        android:text="comment"
+        android:textColor="@color/black"
+        android:textSize="18sp"></TextView>
+
+
+</LinearLayout>

@@ -1,4 +1,4 @@
-package com.asus.instagramclone;
+package com.asus.instagramclone.view;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void transitionBetweenActivity(){
-        Intent intent = new Intent(MainActivity.this,FeedActivity.class);
+        Intent intent = new Intent(MainActivity.this, FeedActivity.class);
         startActivity(intent);
         finish();
     }
